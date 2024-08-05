@@ -21,6 +21,10 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
+defaults:
+  run:
+    working-directory: frontend
+
 jobs:
   # Build job
   build:
@@ -43,9 +47,9 @@ jobs:
         id: yarn-cache
         with:
           path: ${{steps.yarn-cache-dir-path.outputs.dir}}
-          key: ${{runner.os}}-yarn-${{hashFiles('./frontend/yarn.lock')}}
+          key: frontend-${{runner.os}}-yarn-${{hashFiles('**/yarn.lock')}}
           restore-keys: |
-            ${{runner.os}}-yarn-
+            frontend-${{runner.os}}-yarn-
 
       - name: Install dependencies
         run: |
@@ -61,7 +65,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './frontend/build'
+          path: './build'
 
   # Deployment job
   deploy:
